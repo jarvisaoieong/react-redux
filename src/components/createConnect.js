@@ -34,9 +34,9 @@ export default function createConnect(React) {
     // Helps track hot reloading.
     const version = nextVersion++;
 
-    function computeStateProps(store) {
+    function computeStateProps(store, props) {
       const state = store.getState();
-      const stateProps = finalMapStateToProps(state);
+      const stateProps = finalMapStateToProps(state, props);
       invariant(
         isPlainObject(stateProps),
         '`mapStateToProps` must return an object. Instead received %s.',
@@ -95,7 +95,7 @@ export default function createConnect(React) {
             `or explicitly pass "store" as a prop to "${this.constructor.displayName}".`
           );
 
-          this.stateProps = computeStateProps(this.store);
+          this.stateProps = computeStateProps(this.store, props);
           this.dispatchProps = computeDispatchProps(this.store);
           this.state = {
             props: this.computeNextState()
@@ -103,7 +103,7 @@ export default function createConnect(React) {
         }
 
         recomputeStateProps() {
-          const nextStateProps = computeStateProps(this.store);
+          const nextStateProps = computeStateProps(this.store, this.props);
           if (shallowEqual(nextStateProps, this.stateProps)) {
             return false;
           }
